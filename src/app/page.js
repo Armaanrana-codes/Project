@@ -1,337 +1,335 @@
-// app/page.js
+// app/page.jsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { 
-  FiArrowRight, 
-  FiStar, 
-  FiShield, 
-  FiZap,
-  FiMoon,
+import {
+  FiArrowRight,
   FiSun,
-  FiMenu,
-  FiX
+  FiMoon,
+  FiShield,
+  FiTrendingUp,
+  FiClock,
+  FiStar,
+  FiUsers,
+  FiAward
 } from "react-icons/fi";
 import { getStyles } from "@/src/app/utils/them";
 
-export default function HomePage() {
+export default function Home() {
   const router = useRouter();
   const [mode, setMode] = useState("light");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const styles = getStyles(mode);
 
+  useEffect(() => {
+    const savedMode = localStorage.getItem("theme-mode") || "light";
+    setMode(savedMode);
+  }, []);
+
   const toggleTheme = () => {
-    setMode(prev => prev === "light" ? "dark" : "light");
+    const newMode = mode === "light" ? "dark" : "light";
+    setMode(newMode);
+    localStorage.setItem("theme-mode", newMode);
   };
 
   const features = [
     {
-      icon: <FiZap size={32} />,
+      icon: <FiShield className="w-8 h-8" />,
+      title: "Premium Security",
+      description: "Bank-grade encryption protecting your digital assets 24/7"
+    },
+    {
+      icon: <FiTrendingUp className="w-8 h-8" />,
+      title: "Market Insights",
+      description: "Real-time analytics and AI-powered market predictions"
+    },
+    {
+      icon: <FiClock className="w-8 h-8" />,
       title: "Lightning Fast",
-      description: "Built with Next.js for optimal performance and speed"
-    },
-    {
-      icon: <FiShield size={32} />,
-      title: "Secure by Default",
-      description: "Enterprise-grade security with MongoDB integration"
-    },
-    {
-      icon: <FiStar size={32} />,
-      title: "Modern Design",
-      description: "Beautiful UI with smooth animations and dark mode"
+      description: "Execute trades in milliseconds with our optimized engine"
     }
   ];
 
   const stats = [
-    { value: "99.9%", label: "Uptime" },
-    { value: "10k+", label: "Users" },
-    { value: "24/7", label: "Support" },
-    { value: "50+", label: "Features" }
+    { icon: <FiUsers className="w-6 h-6" />, value: "10M+", label: "Active Users" },
+    { icon: <FiStar className="w-6 h-6" />, value: "4.9", label: "User Rating" },
+    { icon: <FiAward className="w-6 h-6" />, value: "50+", label: "Awards Won" }
   ];
+
+  const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
+
+  const stagger = {
+    animate: {
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
 
   return (
     <div style={styles.page}>
-      {/* Navbar */}
-      <motion.nav 
+      {/* Navigation */}
+      <motion.nav
+        style={styles.navbar}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        style={styles.navbar}
       >
-        <div style={styles.container} className="flex justify-between items-center">
-          <motion.div 
+        <div style={{ ...styles.container, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <motion.div
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
             whileHover={{ scale: 1.05 }}
-            className="text-2xl font-bold"
-            style={{ color: styles.heading.color }}
           >
-            LOGO
+            <FiShield className="w-8 h-8" style={{ color: styles.button.backgroundColor }} />
+            <span style={{ fontSize: "1.5rem", fontWeight: "700", color: styles.heading.color }}>
+              Fortress
+            </span>
           </motion.div>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" style={{ color: styles.subHeading.color }} className="hover:opacity-80">
-              Features
-            </a>
-            <a href="#about" style={{ color: styles.subHeading.color }} className="hover:opacity-80">
-              About
-            </a>
-            <a href="#contact" style={{ color: styles.subHeading.color }} className="hover:opacity-80">
-              Contact
-            </a>
-            <button
+          <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+            <div style={{ display: "flex", gap: "1.5rem" }}>
+              {["Features", "About", "Contact"].map((item) => (
+                <motion.a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  style={{ color: styles.heading.color, fontWeight: "500", textDecoration: "none" }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {item}
+                </motion.a>
+              ))}
+            </div>
+
+            <motion.button
               onClick={toggleTheme}
               style={{
-                backgroundColor: 'transparent',
-                border: `1px solid ${getStyles(mode).border}`,
-                borderRadius: '50%',
-                width: '40px',
-                height: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: styles.text
+                ...styles.buttonSecondary,
+                padding: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
               }}
+              whileHover={{ scale: 1.1, rotate: 180 }}
+              whileTap={{ scale: 0.9 }}
             >
-              {mode === "light" ? <FiMoon size={20} /> : <FiSun size={20} />}
-            </button>
+              {mode === "light" ? <FiMoon className="w-5 h-5" /> : <FiSun className="w-5 h-5" />}
+            </motion.button>
+
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               style={styles.button}
-              onClick={() => router.push('/get-started')}
+              whileHover={{ scale: 1.05, backgroundColor: styles.button.backgroundColor }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.push("/signup")}
             >
               Get Started
             </motion.button>
           </div>
-
-          {/* Mobile Menu Toggle */}
-          <div className="md:hidden flex items-center gap-4">
-            <button
-              onClick={toggleTheme}
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: styles.text
-              }}
-            >
-              {mode === "light" ? <FiMoon size={20} /> : <FiSun size={20} />}
-            </button>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: styles.text
-              }}
-            >
-              {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-            </button>
-          </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4"
-          >
-            <div className="flex flex-col gap-4 py-4">
-              <a href="#features" style={{ color: styles.subHeading.color }}>Features</a>
-              <a href="#about" style={{ color: styles.subHeading.color }}>About</a>
-              <a href="#contact" style={{ color: styles.subHeading.color }}>Contact</a>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                style={styles.button}
-                onClick={() => router.push('/get-started')}
-              >
-                Get Started
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
       </motion.nav>
 
       {/* Hero Section */}
-      <section style={styles.hero}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          style={styles.container}
+      <motion.section
+        style={styles.hero}
+        variants={stagger}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.h1 style={styles.heading} variants={fadeInUp}>
+          Secure Your Digital Future
+        </motion.h1>
+        
+        <motion.p
+          style={{ ...styles.subHeading, maxWidth: "600px", fontSize: "1.2rem" }}
+          variants={fadeInUp}
         >
-          <motion.h1
-            style={styles.heading}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-          >
-            Build Something Amazing
-          </motion.h1>
-          
-          <motion.p
-            style={styles.subHeading}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-6 max-w-2xl mx-auto text-lg"
-          >
-            Create stunning web applications with our modern tech stack. 
-            Fast, secure, and beautifully designed for the future.
-          </motion.p>
+          The most advanced digital fortress for protecting and growing your assets with military-grade security
+        </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mt-8"
+        <motion.div
+          style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}
+          variants={fadeInUp}
+        >
+          <motion.button
+            style={styles.button}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => router.push("/dashboard")}
           >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={styles.button}
-              onClick={() => router.push('/get-started')}
-              className="flex items-center gap-2"
-            >
-              Get Started <FiArrowRight />
-            </motion.button>
-            
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={styles.buttonSecondary}
-            >
-              Learn More
-            </motion.button>
-          </motion.div>
+            Launch Dashboard
+            <FiArrowRight style={{ marginLeft: "0.5rem", display: "inline" }} />
+          </motion.button>
+
+          <motion.button
+            style={styles.buttonSecondary}
+            whileHover={{ scale: 1.05, backgroundColor: styles.buttonSecondary.color + "10" }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => router.push("/learn-more")}
+          >
+            Learn More
+          </motion.button>
         </motion.div>
-      </section>
 
-      {/* Stats Section */}
-      <section style={styles.section}>
-        <div style={styles.container}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8"
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                style={styles.card}
-                className="text-center"
-              >
-                <h3 style={{ ...styles.heading, fontSize: '2.5rem' }}>
-                  {stat.value}
-                </h3>
-                <p style={styles.subHeading}>{stat.label}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+        {/* Stats */}
+        <motion.div
+          style={{
+            display: "flex",
+            gap: "3rem",
+            marginTop: "4rem",
+            flexWrap: "wrap",
+            justifyContent: "center"
+          }}
+          variants={stagger}
+          initial="initial"
+          animate="animate"
+        >
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              style={{ textAlign: "center" }}
+              variants={fadeInUp}
+              whileHover={{ scale: 1.1 }}
+            >
+              <div style={{ color: styles.button.backgroundColor, marginBottom: "0.5rem" }}>
+                {stat.icon}
+              </div>
+              <div style={{ fontSize: "2rem", fontWeight: "700", color: styles.heading.color }}>
+                {stat.value}
+              </div>
+              <div style={{ color: styles.subHeading.color, fontSize: "0.9rem" }}>
+                {stat.label}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.section>
 
       {/* Features Section */}
-      <section id="features" style={styles.section}>
+      <motion.section
+        id="features"
+        style={styles.section}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
         <div style={styles.container}>
-          <motion.div
+          <motion.h2
+            style={{ ...styles.heading, textAlign: "center", marginBottom: "3rem", fontSize: "2.5rem" }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
           >
-            <h2 style={{ ...styles.heading, fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
-              Why Choose Us
-            </h2>
-            <p style={styles.subHeading} className="mt-4">
-              Everything you need to build modern web applications
-            </p>
-          </motion.div>
+            Why Choose Fortress
+          </motion.h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "2rem"
+            }}
+            variants={stagger}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+          >
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -10 }}
                 style={styles.card}
+                variants={fadeInUp}
+                whileHover={{ y: -10, boxShadow: "0 10px 40px rgba(0,0,0,0.15)" }}
               >
-                <div style={{ color: styles.heading.color }} className="mb-4">
+                <div style={{ color: styles.button.backgroundColor, marginBottom: "1rem" }}>
                   {feature.icon}
                 </div>
-                <h3 style={{ ...styles.heading, fontSize: '1.5rem' }}>
+                <h3 style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "0.5rem", color: styles.heading.color }}>
                   {feature.title}
                 </h3>
-                <p style={styles.subHeading} className="mt-2">
+                <p style={{ color: styles.subHeading.color, lineHeight: "1.6" }}>
                   {feature.description}
                 </p>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* CTA Section */}
-      <section style={styles.section}>
+      <motion.section
+        style={{ ...styles.section, textAlign: "center" }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
         <div style={styles.container}>
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
             style={{
               ...styles.card,
-              textAlign: 'center',
-              padding: '4rem 2rem',
-              background: `linear-gradient(135deg, ${getStyles(mode).primary}, ${getStyles(mode).hover})`
+              background: `linear-gradient(135deg, ${styles.button.backgroundColor}, ${styles.button.backgroundColor}dd)`,
+              color: "#fff",
+              padding: "4rem 2rem"
             }}
+            whileHover={{ scale: 1.02 }}
           >
-            <h2 style={{ ...styles.heading, color: '#fff' }}>
-              Ready to Get Started?
+            <h2 style={{ fontSize: "2.5rem", fontWeight: "700", marginBottom: "1rem" }}>
+              Ready to Secure Your Assets?
             </h2>
-            <p style={{ color: '#fff', opacity: 0.9 }} className="mt-4 mb-8 text-lg">
-              Join thousands of developers building with our platform
+            <p style={{ fontSize: "1.2rem", marginBottom: "2rem", opacity: 0.9 }}>
+              Join millions of users who trust Fortress with their digital security
             </p>
             <motion.button
+              style={{
+                ...styles.button,
+                backgroundColor: "#fff",
+                color: styles.button.backgroundColor,
+                fontSize: "1.1rem"
+              }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              style={{
-                backgroundColor: '#fff',
-                color: styles.heading.color,
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '1.1rem'
-              }}
-              onClick={() => router.push('/get-started')}
+              onClick={() => router.push("/signup")}
             >
               Start Free Trial
+              <FiArrowRight style={{ marginLeft: "0.5rem", display: "inline" }} />
             </motion.button>
           </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer */}
-      <footer style={styles.footer}>
+      <motion.footer
+        style={styles.footer}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
         <div style={styles.container}>
-          <p>&copy; 2024 Your Company. All rights reserved.</p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+            <p>© 2024 Fortress. All rights reserved.</p>
+            <div style={{ display: "flex", gap: "1.5rem" }}>
+              {["Privacy", "Terms", "Contact"].map((item) => (
+                <motion.a
+                  key={item}
+                  href={`/${item.toLowerCase()}`}
+                  style={{ color: styles.subHeading.color, textDecoration: "none" }}
+                  whileHover={{ color: styles.button.backgroundColor }}
+                >
+                  {item}
+                </motion.a>
+              ))}
+            </div>
+          </div>
         </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 }
